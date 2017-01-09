@@ -1,0 +1,1 @@
+djangosecretkey = 'xz@^g(7@ztyd0k_7r!vnk93pwo4kq%5=p3zq$)y74m3nvj+9_p'

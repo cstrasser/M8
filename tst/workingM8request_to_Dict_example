@@ -1,0 +1,19 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+from requests.auth import HTTPBasicAuth
+import requests
+import json
+
+
+
+
+
+def hello(request):
+    question = []
+          
+    response = requests.get('https://api.servicem8.com/api_1.0/staff.json',auth=HTTPBasicAuth('cstrasser@secureway.ca','1010Security')) 
+    q = dict(json.loads(response.text)[0])
+    print (q['custom_icon_url'])
+           
+        
+    return render(request, 'index.html', {'question': question})
