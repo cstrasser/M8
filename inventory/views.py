@@ -8,17 +8,20 @@ from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.shortcuts import render
 
-CJSM8_Key = os.environ['CJSM8']
-
+def m8APIMixin(request,m8API):
+    m8_Key = os.environ['CJSM8']
+    M8BASE ='https://api.servicem8.com/api_1.0'
+    if request.user.is_authenticated():
+        user = request.user.email
+    context = os.path.join(M8BASE,m8API)
+    print (context)
+    result =requests.get(context, auth=HTTPBasicAuth(user,m8_Key))
+    return (result)
 
 def inventory(request):
-    m8user = None
-    if request.user.is_authenticated():
-        m8user = request.user.email
     inventory_list = []
-    response = requests.get('https://api.servicem8.com/api_1.0/Material.json',auth=HTTPBasicAuth('cstrasser@secureway.ca',CJSM8_Key)) 
-    
-    for w in (json.loads(response.text)):   
+    data = m8APIMixin(request,'Material.json')
+    for w in (json.loads(data.text)):   
         item = dict(w)
         if item['active'] ==1: #only show active invnetory items
             inventory_list.append(item)
@@ -39,7 +42,12 @@ def hello_pdf(request):
     p.line(100,100,200,100) #line
     p.drawString(105, 105, "Line 2")
     p.rect(100, 100, 50,50, stroke=1, fill=0) #rectangle
-    
+    # Close the PDF object cleanly.
+    p.showPage()
+    p.save()
+    #return HttpResponse('Hi responsded')
+    response.write(temp.getvalue())
+    return response
 ''' example on how to do lines of text in pdf file from the reportlab manual
 # size = 7
 #  y = 2.3*inch
@@ -48,9 +56,4 @@ def hello_pdf(request):
 #  canvas.setFont("Helvetica", size)
 #  canvas.drawRightString(x,y,"%s points: " % size)
 #  canvas.drawString(x,y, line)'''
-    # Close the PDF object cleanly.
-    p.showPage()
-    p.save()
-    #return HttpResponse('Hi responsded')
-    response.write(temp.getvalue())
-    return response
+    
