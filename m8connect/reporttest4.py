@@ -3,7 +3,8 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm, inch
 from reportlab.pdfgen import canvas
-from reportlab.platypus import Image, Paragraph, Table, SimpleDocTemplate
+from reportlab.platypus import Image, Paragraph, Table, SimpleDocTemplate, TableStyle
+from reportlab.lib import colors
  
  
 ########################################################################
@@ -12,8 +13,9 @@ class PDFMake(object):
     """"""
  
     #----------------------------------------------------------------------
-    def __init__(self, pdf_file):
-        self.c = canvas.Canvas(pdf_file, pagesize=letter)
+    def __init__(self, pdf_file_name):
+        pdf_file_name = pdf_file_name + '.pdf'
+        self.c = canvas.Canvas(pdf_file_name , pagesize=letter)
         self.styles = getSampleStyleSheet()
         self.width, self.height = letter
         self.rightMargin = inch/4
@@ -25,55 +27,46 @@ class PDFMake(object):
 
     #header information (company logo address Quote number...-)-----------------------------------------
     def DocumentHeader(self):
-        voffset = 25
-        
-        header = Paragraph('This is a multi-line header.  It goes on every page.   ' * 5, self.styles['Normal'])
-        w, h = header.wrap(self.width, self.topMargin)
-        spot = ((self.height - self.topMargin[0]) - h)
-        header.drawOn(self.c, self.leftMargin, spot)
-        # create return address
-        address = "Secureway<br/> 11-333 California Ave<br/> PO Box 372<br/>  Brockville, Ont K6V 5Y6<br/> "
-        
-        p = Paragraph(address, self.styles["Normal"])        
+        ADDRESS = '''<font size="14"><b>Quotation</b></font><br/><font size="8">11-333 California Ave<br/>
+                     PO Box 372<br/>  Brockville, Ont K6V 5Y6<br/>613-704-1463 </font>'''
+        #w, h = header.wrap(self.width, self.topMargin)
+        spot = ((self.height - self.topMargin[0]) - 75) #fixes topmargin tuple error
+        #header.drawOn(self.c, self.leftMargin, spot)
+        print (self.leftMargin, spot) #for debugging
+       
+        # ---------create return address
+        p = Paragraph(ADDRESS, self.styles["Normal"])        
  
         # add a logo and size it
         logo = Image("swlogo.jpg")
-        logo.drawHeight = 1*inch
-        logo.drawWidth = 3*inch
-##        logo.wrapOn(self.c, self.width, self.height)
-##        logo.drawOn(self.c, *self.coord(140, 60, mm  ))
-##        
-        data = [[p,logo]]
-        table = Table(data, colWidths=[3*inch,3*inch])
-        table.setStyle([("VALIGN", (0,0), (0,0), "TOP")])
+        logo.drawHeight = .75*inch
+        logo.drawWidth = 2*inch       
+        data = [[logo ,' ',p ]]
+        table = Table(data, colWidths=[2.25*inch,4.25*inch, 1.5*inch])
+        table.setStyle(TableStyle([("VALIGN", (0,0), (0,0), "TOP"),
+             ('ALIGN', (1,-1), (1,-1), 'RIGHT'),
+             ('ALIGN', (-1,-1), (-1,-1), 'RIGHT'),
+             ('ALIGN', (-1,0), (-1,-1), 'RIGHT'),
+             ('TEXTCOLOR',(0,0),(-2,-2),colors.red)
+             #('BOX', (0,0), (-1,-1), 0.25, colors.grey),
+             #('INNERGRID', (0,0), (-1,-1), 0.25, colors.grey)
+             ]))
+         
         table.wrapOn(self.c, self.width, self.height)
-        table.drawOn(self.c, *self.coord(18, 60, mm))
- 
-        # insert body of letter
-        ptext = "Dear Sir or Madam:"
-        self.createParagraph(ptext, 20, voffset+45)
- 
-        ptext = """
-        The document you are holding is a set of requirements for your next mission, should you
-        choose to accept it. In any event, this document will self-destruct seconds after you
-        read it. Yes,  can tell when you're done...usually.
-        """ 
-        p = Paragraph(ptext, self.styles["Normal"])
-        p.wrapOn(self.c, self.width-120, self.height)
-        p.drawOn(self.c, *self.coord(20, voffset+55, mm))
+        table.drawOn(self.c, self.leftMargin ,spot)
  
     #----------------------------------------------------------------------
+    # Helper class to help position flowables in Canvas objects
     def coord(self, x, y, unit=1):
-        """
-        # http://stackoverflow.com/questions/4726011/wrap-text-in-a-table-reportlab
-        Helper class to help position flowables in Canvas objects
-        """
         x, y = x * unit, self.height -  y * unit
+        print(x,y)
         return x, y    
- 
+
+        # http://stackoverflow.com/questions/4726011/wrap-text-in-a-table-reportlab
+        
     #----------------------------------------------------------------------
     def createParagraph(self, ptext, x, y, style=None):
-        """"""
+       
         if not style:
             style = self.styles["Normal"]
         p = Paragraph(ptext, style=style)
@@ -92,7 +85,7 @@ class PDFMake(object):
      
      #-- Notes Section
             
-     #document footer paginator goes here Footer is :  page x of y  REF:{quotenumber} rightjustify
+     #document footer ---paginator goes here Footer is :  page x of y  REF:{quotenumber} rightjustify
  
     #----------------------------------------------------------------------
     def savePDF(self):
@@ -101,6 +94,6 @@ class PDFMake(object):
  
 #----------------------------------------------------------------------
 if __name__ == "__main__":
-    doc = PDFMake("e.pdf")
+    doc = PDFMake("ey")
     doc.DocumentHeader()
     doc.savePDF()
