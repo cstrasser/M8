@@ -27,14 +27,12 @@ class m8ListRequest():
         #curl -u email:password "https://api.servicem8.com/api_1.0/
         #job.json?%24filter=company_uuid%20eq%20'10420f98-7626-4405-bf43-043f1036623b'"
         self.filteron = kwargs.get('filteron',None)#none is default if nothing sent thru kwargs
-        if self.filteron: #not finished ..if there is a filtervalue append it to the request
-            
+        if self.filteron: #not finished ..if there is a filtervalue append it to the request 
             field  = kwargs.get('filteron')
             operator = kwargs.get('operator')
             value = kwargs.get('value')
             thisFilter = '?%24filter='+ field + '%20'+ operator +'%20' + "'" +value +"'"
             thisRequest= m8Map[args[0]]
-            print ('filter',thisFilter)
             self.response= requests.get(thisRequest + thisFilter, auth=HTTPBasicAuth(USER,m8_Key))
         else: #if no filter then get the whole list
             thisRequest = m8Map[args[0]]
