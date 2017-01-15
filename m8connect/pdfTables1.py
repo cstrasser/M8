@@ -93,6 +93,13 @@ table.setStyle(TableStyle([
 if __name__ == "__main__":
     
     c = canvas.Canvas("B.pdf", pagesize=letter)
+    doc = SimpleDocTemplate(buffer,
+                                rightMargin=inch/4,
+                                leftMargin=inch/4,
+                                topMargin=inch/2,
+                                bottomMargin=inch/4,
+                                pagesize=self.pagesize)
+    
     header = Paragraph('This is a multi-line header.  It goes on every page.   ' * 5, styles['Normal'])
     w, h = header.wrap(doc.width, doc.topMargin)
     header.drawOn(c, doc.leftMargin, doc.height + doc.topMargin - h)

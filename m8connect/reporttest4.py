@@ -27,7 +27,7 @@ class PDFMake(object):
 
     #header information (company logo address Quote number...-)-----------------------------------------
     def DocumentHeader(self):
-        ADDRESS = '''<font size="14"><b>Quotation</b></font><br/><font size="8">11-333 California Ave<br/>
+        ADDRESS = '''<font size="14"><b>Quote</b></font><br/><font size="8">11-333 California Ave<br/>
                      PO Box 372<br/>  Brockville, Ont K6V 5Y6<br/>613-704-1463 </font>'''
         #w, h = header.wrap(self.width, self.topMargin)
         spot = ((self.height - self.topMargin[0]) - 75) #fixes topmargin tuple error
