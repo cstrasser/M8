@@ -11,6 +11,13 @@ import os
 m8_Key = os.environ['CJSM8']
 USER = 'cstrasser@secureway.ca'
 #http://stackoverflow.com/questions/682504/what-is-a-clean-pythonic-way-to-have-multiple-constructors-in-python
+def getname(uuid):
+    get = m8ListRequest('customers', filteron ='uuid', operator = 'eq' ,value = uuid)
+    data = (json.loads(get.response.text)) 
+    foo = {k: v for d in data for k, v in d.items()} #convert list of dict to dict
+    print (foo['name'])
+    return 'name'
+    
 
 class m8ListRequest():
    
@@ -27,7 +34,7 @@ class m8ListRequest():
         #curl -u email:password "https://api.servicem8.com/api_1.0/
         #job.json?%24filter=company_uuid%20eq%20'10420f98-7626-4405-bf43-043f1036623b'"
         self.filteron = kwargs.get('filteron',None)#none is default if nothing sent thru kwargs
-        if self.filteron: #not finished ..if there is a filtervalue append it to the request 
+        if self.filteron: 
             field  = kwargs.get('filteron')
             operator = kwargs.get('operator')
             value = kwargs.get('value')
@@ -39,9 +46,12 @@ class m8ListRequest():
             self.response= requests.get(thisRequest, auth=HTTPBasicAuth(USER,m8_Key))
     
         if self.response.status_code != 200:
+            
             raise Exception('m8ListRequest fail code:' ,self.response.status_code)
         for w in (json.loads(self.response.text)):   
             item = dict(w)
+            if args[0] == 'jobs':
+                    item['name'] = getname(item['company_uuid'])
             request_List.append(item)
         self.data = request_List
        
@@ -64,8 +74,8 @@ class m8ItemRequest():
         self.data = ((json.loads(self.response.text)))
     
             
-class m8ItemCreate(request):
-          m8Map = {'inventory':'https://api.servicem8.com/api_1.0/Material/',
+class m8ItemCreate():
+        m8Map = {'inventory':'https://api.servicem8.com/api_1.0/Material/',
                 'contact':'https://api.servicem8.com/api_1.0/CompanyContact/',
                 'job':'https://api.servicem8.com/api_1.0/Job/',
                 'customer':'https://api.servicem8.com/api_1.0/Company/'}
@@ -76,10 +86,10 @@ class m8ItemCreate(request):
           
 
 if __name__ == '__main__':
-   ID= '6813494b-0088-4c27-baac-e5732a4ff14b' #(mallorytown KOA)
-   mylist = m8ListRequest('jobs',filteron ='company_uuid', operator = 'eq',value = ID )
-   for blah in mylist.data:
-    print(blah['payment_method'])
+   ID = '6813494b-0088-4c27-baac-e5732a4ff14b' #(mallorytown KOA)
+   ID = 'c9fa75ee-0b10-4514-b5d0-21757dd99ffb'
+   mylist = m8ListRequest('customers',filteron ='uuid', operator = 'eq',value = ID )
+   print (mylist.data)
    #customer = m8ItemRequest('customer',ID)
    #print(customer.data['name'])
    #print(customer.data['address'])

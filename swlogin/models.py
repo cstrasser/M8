@@ -5,43 +5,43 @@ class M8_Item_Detail(models.Model):
     costprice =  models.IntegerField()
     lastModified =  models.DateTimeField(auto_now=True)
     sellprice = models.IntegerField()
-    vendor = models.Charfield(max_length=60)
+    vendor = models.CharField(max_length=60)
     
 class Quote(models.Model):
     number = models.IntegerField() # or use m8 numbers ??
-    dateCreated = models.DateTimefield(auto_now_add = True)
+    dateCreated = models.DateTimeField(auto_now_add = True)
     m8_CustomerUUID = models.CharField(max_length=36)
     title  = models.CharField(max_length=60) #Quick one line title to describe the quotation
     description  = models.CharField(max_length=60) # preamble description visible to customer always works with title 
     related_M8UUID = models.CharField(max_length=36) # is there a related M8 Object ?
-    total = Integerfield() #if fixed price we need this
-    note = models.Textfield()
+    total = models.IntegerField() #if fixed price we need this
+    note = models.TextField()
     private_Note = models.TextField()
     #signature  =  add signature line to quote at end
     #status #open or closed sent .. are all items received    
 
     
 class PO(models.Model):  #needs a merge method so we can send one PO for many jobs
-    vendor #M8 vendor or create our own vendor table ?? or Connect vendors from Xero ??
+    #vendor #M8 vendor or create our own vendor table ?? or Connect vendors from Xero ??
     dateIssued = models.DateField(auto_now=False, auto_now_add=True, ) # check this syntax
-    notes = models.Textfield()
+    notes = models.TextField()
     #status #open or closed sent .. are all items received    
     
 class LineItem(models.Model):
     lineNumber  = models.IntegerField()
     item_M8UUID = models.CharField(max_length=36)
-    qty = modles.Integerfield()
+    qty = models.IntegerField()
     cost = models.IntegerField()
-    multiplier = FloatField(default=1.522) #if multiplier set to 0 allow fixed price to stay multiplier only on quotes 
+    multiplier = models.FloatField(default=1.522) #if multiplier set to 0 allow fixed price to stay multiplier only on quotes 
     price = models.IntegerField()
     hideOnPrint = models.BooleanField(default = False) # this way we can hide lines or prices on the printed quote or PO
     hidePriceOnPrint = models.BooleanField(default = False)
-    isOption = models.BololeanField(default = False) # for quotes if this line will be in options section
+    isOption = models.BooleanField(default = False) # for quotes if this line will be in options section
     
-    Meta:
-         Abstract= True # needs abstract to allow Lineitem on both Quote and PO
+    #Meta:
+     #    Abstract= True # needs abstract to allow Lineitem on both Quote and PO
     
-class Quoteline(Lineitem):
+class Quoteline(LineItem):
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE)
     
    

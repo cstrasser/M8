@@ -7,26 +7,21 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.shortcuts import render
+from m8connect.m8requests import m8ListRequest
 
-def m8APIMixin(request,m8API):
-    m8_Key = os.environ['CJSM8']
-    M8BASE ='https://api.servicem8.com/api_1.0'
-    if request.user.is_authenticated():
-        user = request.user.email
-    context = os.path.join(M8BASE,m8API)
-    print (context)
-    result =requests.get(context, auth=HTTPBasicAuth(user,m8_Key))
-    return (result)
 
 def inventory(request):
-    inventory_list = []
-    data = m8APIMixin(request,'Material.json')
-    for w in (json.loads(data.text)):   
-        item = dict(w)
-        if item['active'] ==1: #only show active invnetory items
-            inventory_list.append(item)
-            
-    return render(request, 'inventory.html', {'inventory_list': inventory_list})
+    inventory_list = m8ListRequest('inventory')           
+    return render(request, 'inventory.html', {'inventory_list': inventory_list.data})
+
+def customers(request):
+    customer_list = m8ListRequest('customers')           
+    return render(request, 'customers.html', {'customer_list': customer_list.data})
+
+def jobs(request):
+    job_list = m8ListRequest('jobs')
+    return render(request, 'jobs.html', {'customer_list': job_list.data})
+ 
 
 
 def hello_pdf(request):

@@ -22,7 +22,9 @@ from swlogin import views
 urlpatterns = [
     url(r'^$', views.logon,name ='logon'),
     url(r'^admin/', admin.site.urls),
-    url(r'^inventory/', include('inventory.urls'), name = 'inventory'),
+    url(r'^lists/', include('inventory.urls')),
+    
+    #url(r'^$', views.inventory, name ='inventory'),
     url(r'^hi/', include('inventory.urls'), name = 'hipdf'),
    
 ]

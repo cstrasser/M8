@@ -1,0 +1,37 @@
+{% extends 'base.html'%}
+{% block body_block%}
+    {% load staticfiles %}
+    <div class="row-fluid">
+    <table class="table table-striped" id ="JobList">
+      <thead>
+        <tr>
+          <th class=col-sm-1>Check</th>
+          <th class=col-sm-3>Customer</th>
+          <th class=col-sm-5>Description</th>
+          <th class=col-sm-1></th>
+          <th class=col-sm-1></th>
+          <th class=col-sm-1></th>
+         
+          
+        </tr>
+      </thead>
+    </div>
+      <tbody>
+        
+        {% for item  in customer_list %}  
+          <div class = 'Job_list_item'>
+           <tr>
+            <td><input type='checkbox' {% ifequal value 0 %}checked{% endifequal %}> </td>
+            <td>{{item.company_uuid}}</td>
+            <td>{{item.job_description}}</td>
+           
+          </tr>
+       </div> 
+        {% endfor %}
+        
+      </tbody>
+    </table>
+  </div>
+</div>
+  
+ {%endblock%}

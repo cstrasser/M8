@@ -1,0 +1,38 @@
+{% extends 'base.html'%}
+{% block body_block%}
+    {% load staticfiles %}
+    <div class="row-fluid">
+    <table class="table table-striped" id ="CustmoerList">
+      <thead>
+        <tr>
+          <th class=col-sm-1>Check</th>
+          <th class=col-sm-1>Name</th>
+          <th class=col-sm-4>Street</th>
+          <th class=col-sm-4>City</th>
+          <th class=col-sm-1>Badge</th>
+          <th class=col-sm-1></th>
+          <th class=col-sm-1></th>
+          
+        </tr>
+      </thead>
+    </div>
+      <tbody>
+        
+        {% for item  in customer_list %}  
+          <div class = 'customer_list_item'>
+           <tr>
+            <td><input type='checkbox' {% ifequal value 0 %}checked{% endifequal %}> </td>
+            <td>{{item.name}}</td>
+            <td>{{item.address_street}}</td>
+            <td>{{item.address_city}}</td>
+            <td>${{item.badges</td>
+          </tr>
+       </div> 
+        {% endfor %}
+        
+      </tbody>
+    </table>
+  </div>
+</div>
+  
+ {%endblock%}

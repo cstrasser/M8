@@ -1,7 +1,9 @@
 .Python
 env
-bin
+bin/
 lib
 include
 .DS_Store
 .pyc
+.pdf
+__pycache__
