@@ -7,3 +7,5 @@ include
 .pyc
 .pdf
 __pycache__
+/admin
+
