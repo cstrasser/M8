@@ -15,17 +15,16 @@ def logon(request):
             if user.is_active:
                 login(request, user)
                 print ('login user is active')
-                return render(request,'inventory.html',{})
-                #return redirect(request,'home.html',{})
+                return render(request,'quote/quotelist.html',{'message':'got this message from logon view'})
+                
             
             else:
-                
-                pass # Return a 'disabled account' error message
+                print ('Disabled account') # Return a 'disabled account' error message
         else:
-           pass#  Return an 'invalid login' error message.
+           print('invalid login')  #Return an 'invalid login' error message.
             
     else:
         return render(request, 'loginform.html')
     
 def about(request):
-    return render(request, 'about.html')
+    return render(request, 'inventory.html')

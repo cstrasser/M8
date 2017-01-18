@@ -53,7 +53,7 @@
        
      </div> --><!--Navbar-->
      <div class= "page-header">
-     {% block page_header%}{% endblock %}
+     {% block page_header%} {%if message %} <div class="row-fluid"><div class="span4 offset2"><div class="alert alert-info" role="alert"> {{message}} </div></div></div>{%endif%}{% endblock %}
     
         <div class="col-md-11">
           {% block body_block %} - body block info - {% endblock %}

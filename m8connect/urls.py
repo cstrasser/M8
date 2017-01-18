@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^$', views.logon,name ='logon'),
     url(r'^admin/', admin.site.urls),
     url(r'^lists/', include('inventory.urls')),
-    
+    url(r'^quote/', include('quote.urls')),
     #url(r'^$', views.inventory, name ='inventory'),
     url(r'^hi/', include('inventory.urls'), name = 'hipdf'),
    

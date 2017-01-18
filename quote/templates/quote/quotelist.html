@@ -1,0 +1,56 @@
+{% extends 'base.html'%}
+
+    {% load staticfiles %}
+{% block page_header%}
+<div class="row">
+  <div class="col-md-10">
+    <div class="col-md-6">
+    <div class="input-group">
+      <span class="input-group-btn">
+      <button class="btn btn-default" type="New" value="New" /><a href="{% url "new" %}">New</a></button>
+       <a href="{% url "new" %}">new</a>
+      </span>
+      <input type="text" class="form-control" placeholder="Search for...">
+    </div>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+  
+ 
+{%endblock%}
+{% block body_block%}
+
+  
+    
+    <div class="row-fluid">
+    <table class="table table-striped" id ="quotelist">
+      <thead>
+        <tr>
+          <th class=col-sm-1></th>
+          <th class=col-sm-3>Customer</th>
+          <th class=col-sm-3>Title</th>
+          <th class=col-sm-1>Price</th>
+          <th class=col-sm-1>Created By</th>
+            <th class=col-sm-1>Date</th>
+        </tr>
+      </thead>
+    </div>
+      <tbody>
+        
+        {% for item  in data %}  
+          <div class = 'quotelist'>
+           <tr>
+            <td><input type='checkbox' {% ifequal value 0 %}checked{% endifequal %}> </td>
+            <td>{{item.customer}}</td>
+            <td>{{item.title}}</td>
+            <td>{{item.price|floatformat:2}}</td>
+            <td>${{item.ceratedby}}</td>
+                      </tr>
+       </div> 
+        {% endfor %}
+        
+      </tbody>
+    </table>
+  </div>
+</div>
+  
+ {%endblock%}
