@@ -13,6 +13,10 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 import os
+from datetime import datetime
+
+
+from quote.models import Company,Company_Contact
 
  #M8BASE ='https://api.servicem8.com/api_1.0'
 m8_Key = os.environ['CJSM8']
@@ -82,14 +86,109 @@ class m8ItemCreate():
                 'customer':'https://api.servicem8.com/api_1.0/Company/'}
         pass
         #to be completed later
+
+def update_local_tables(): # on login run this to update local customer and company tables with m8 data 
+    '''gets all m8 contacts matches company and then populates local db if contact not in local db
+      *****REMEMBER if a company doesnt have a contact then the company will not be added to local db*****
+      to be added... only get contacts that are less than a week old to reduce the 'ask and processing time'''
+    '''import datetime
+      d = ['09-2012', '04-2007', '11-2012', '05-2013', '12-2006', '05-2006', '08-2007']
+       sorted(d, key=lambda x: datetime.datetime.strptime(x, '%m-%Y'))'''
+       
+    companies = m8ListRequest('customers')
+    contacts = m8ListRequest('contacts',filteron ='edit_date',
+                             operator = 'gt',value = "2017-01-01" ) #hardcoded need to fix.. and how to gt a text value ??
+    for contact in contacts.data: 
+        for company in companies.data:
+            if company['uuid']   == contact['company_uuid']:
+                #ok we have a match here do the models processing
+                person = Company_Contact()
+                place = Company()
+                try: #django throws exeption if the record does not exist
+                    isexisting = Company_Contact.objects.get(pk=contact['uuid']) 
+                    print('FROM SQL DB:', isexisting) # if they do exist update local table with some fields
+                    person.active = contact['active']
+                    person.edit_date = datetime.strptime(contact['edit_date'],'%Y-%m-%d %H:%M:%S')
+                    person.company_uuid = place
+                    person.first = 	contact['first']
+                    person.last = contact['last']
+                    person.phone = contact['phone']		
+                    person.mobile = contact['mobile']		
+                    person.email = contact['email']	
+                    person.type = contact['type']		
+                    person.is_primary_contact = contact['is_primary_contact']	
+                    test = person.first + person.last
+                    person.save()
+                except Company_Contact.DoesNotExist: # if contact does not exist then add to local table 
+                    person.uuid	= contact['uuid']
+                    person.active = contact['active']
+                    person.edit_date = datetime.strptime(contact['edit_date'],'%Y-%m-%d %H:%M:%S')
+                    person.company_uuid = place
+                    person.first = 	contact['first']
+                    person.last = contact['last']
+                    person.phone = contact['phone']		
+                    person.mobile = contact['mobile']		
+                    person.email = contact['email']	
+                    person.type = contact['type']		
+                    person.is_primary_contact = contact['is_primary_contact']	
+                    test = person.first + person.last
+                    if len(test) >2: # if the name > 2 characters then save it (so we don't save blank or dumb contcact names to db)
+                        person.save()
+                                
+                    try:
+                        CompanyExists = Company.objects.get(pk=company['uuid'])
+                        #if company exists uppdate selected fields
+                        place.active =	company['active']
+                        place.edit_date = datetime.strptime(company['edit_date'],'%Y-%m-%d %H:%M:%S')
+                        place.name	=company['name']
+                        place.website=	company['website']	
+                        place.abn_number =	company['abn_number']
+                        place.is_individual	=	company['is_individual']
+                        place.address_street=	company['address_street']	
+                        place.address_city	=	company['address_city']
+                        place.address_state	=	company['address_state']
+                        place.address_postcode	=	company['address_postcode']
+                        place.address_country	=	company['address_country']
+                        place.fax_number = company['fax_number']
+                        place.address = company['address']
+                        place.billing_address =	company['billing_address']
+                        place.badges = company['badges']
+                        place.tax_rate_uuid	=	company['tax_rate_uuid']
+                        place.parent_company_uuid =  company['parent_company_uuid']                         
+                        place.save()
+                    except Company.DoesNotExist: # company does not exist add it to local db
+                        place.uuid	= company['uuid']
+                        place.active =	company['active']
+                        place.edit_date = datetime.strptime(company['edit_date'],'%Y-%m-%d %H:%M:%S')	
+                        place.name	=company['name']
+                        place.website=	company['website']	
+                        place.abn_number =	company['abn_number']
+                        place.is_individual	=	company['is_individual']
+                        place.address_street=	company['address_street']	
+                        place.address_city	=	company['address_city']
+                        place.address_state	=	company['address_state']
+                        place.address_postcode	=	company['address_postcode']
+                        place.address_country	=	company['address_country']
+                        place.fax_number = company['fax_number']
+                        place.address = company['address']
+                        place.billing_address =	company['billing_address']
+                        place.badges = company['badges']
+                        place.tax_rate_uuid	=	company['tax_rate_uuid']
+                        place.parent_company_uuid =  company['parent_company_uuid']                         
+                        place.save()
+                            
+                        print('********',contact['first'],contact['last'],'=>',person.first,person.last,
+                              company['name'],'=>',place.name)
+                        
+    
+
             
 if __name__ == '__main__':
    ID = '6813494b-0088-4c27-baac-e5732a4ff14b' #(mallorytown KOA)
    ID = 'c9fa75ee-0b10-4514-b5d0-21757dd99ffb'
    #mylist = m8ListRequest('customers',filteron ='uuid', operator = 'eq',value = ID )
-   mylist = m8ListRequest('jobs')
-   print(mylist.data)
-    
+   #print(companies.data[1])
+   #print(contacts.data[1])
    #print (mylist.data)
    #customer = m8ItemRequest('customer',ID)
    #print(customer.data['name'])

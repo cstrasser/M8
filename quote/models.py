@@ -64,3 +64,42 @@ class POLine(LineItem):
 class Quoteline(LineItem): #need to attach each line item in a quote to the quote ... I think ...
     quote = models.ForeignKey(Quote,on_delete=models.CASCADE)
     
+
+class Company(models.Model): 
+    uuid =	models.CharField(max_length=38, primary_key = True)
+    active = models.BooleanField()    
+    edit_date =	models.DateTimeField()
+    name =	models.CharField(max_length=100)
+    abn_number	=	models.CharField(max_length=40) # austrailian business number 
+    is_individual = models.CharField(max_length=40)
+    address_street = models.CharField(max_length=60)
+    address_city = models.CharField(max_length=60)
+    address_state =	models.CharField(max_length=25)
+    address_postcode = models.CharField(max_length=10)	
+    address_country	= models.CharField(max_length=25)
+    fax_number = models.CharField(max_length=16)
+    address	= models.CharField(max_length=60)
+    billing_address	= models.CharField(max_length=250)
+    badges = models.CharField(max_length=250)
+    tax_rate_uuid =	models.CharField(max_length=38)
+    parent_company_uuid	= models.CharField(max_length=38, default ="")
+    
+    def __str__(self):
+        return self.name
+  
+class Company_Contact(models.Model):
+    uuid = models.CharField(max_length=38, primary_key=True)
+    active = models.BooleanField()  
+    edit_date =models.DateTimeField()	
+    company_uuid = 	models.ForeignKey(Company)
+    first = models.CharField(max_length=40) #	First name	
+    last = models.CharField(max_length=40) #	Last name	
+    phone = models.CharField(max_length=16)
+    mobile = models.CharField(max_length=16)
+    email = models.EmailField()
+    contact_type = models.CharField(max_length=60)
+    is_primary_contact = models.CharField(max_length=38)
+    
+    def __str__(self):
+        return (self.first + ' ' + self.last)
+    

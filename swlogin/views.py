@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth import authenticate, login
 #from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #from main.models import Organization, Location,Contact
+from m8connect.m8requests import update_local_tables
 
 def logon(request):
     nuthin = []
@@ -14,7 +15,8 @@ def logon(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                print ('login user is active')
+                print ('login user is active updating tables')
+                update_local_tables()
                 return render(request,'quote/quotelist.html',{'message':'got this message from logon view'})
                 
             
@@ -25,6 +27,16 @@ def logon(request):
             
     else:
         return render(request, 'loginform.html')
+    
+
+
+
+
+
+
+
+
+
     
 def about(request):
     return render(request, 'inventory.html')

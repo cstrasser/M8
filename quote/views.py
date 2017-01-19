@@ -26,7 +26,7 @@ def customers(request):
     pass
 
 def new(request):
-    print('=========================================click got us here ')
+    
    
     return render(request,'quote/quotelist.html',{})
     #return HttpResponseRedirect(request.GET.get('next')))
